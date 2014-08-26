@@ -538,7 +538,10 @@ function bindFileUpload(key) {
     // Since jQuery File Upload's 'paramName' option seems to be ignored,
     // it requires the name of the upload input to be "images[]". Which clashes
     // with the non-fancy fallback, so we hackishly set it here. :-/
-    $('#fileupload-' + key).attr('name', 'files[]')
+    $('#fileupload-' + key).attr({
+            'name': 'files[]',
+            'multiple': 'multiple'
+        })
         .fileupload({
             dataType: 'json',
             dropZone: $('#dropzone-' + key),
@@ -829,6 +832,11 @@ var Sidebar = Backbone.Model.extend({
     collapse: function() {
         sidebar.closePopOvers();
         $('#navpage-wrapper').removeClass('nav-secondary-opened').addClass('nav-secondary-collapsed');
+        // We add the '-hoverable' class to make sure the sidebar _first_ collapses, and only _then_
+        // can be opened by hovering on it. 
+        setTimeout(function(){ 
+            $('#navpage-wrapper').addClass('nav-secondary-collapsed-hoverable'); 
+        }, 300);
         $.cookie('sidebar', 'collapsed', { expires: 21, path: '/' });
     },
 
@@ -837,7 +845,7 @@ var Sidebar = Backbone.Model.extend({
      */
     expand: function() {
         sidebar.closePopOvers();
-        $('#navpage-wrapper').removeClass('nav-secondary-collapsed nav-secondary-opened');
+        $('#navpage-wrapper').removeClass('nav-secondary-collapsed nav-secondary-opened nav-secondary-collapsed-hoverable');
         $.removeCookie('sidebar', { path: '/' });
     },
 
@@ -1198,7 +1206,10 @@ var FilelistHolder = Backbone.View.extend({
             distance: 5
         });
 
-        $('#fileupload-' + contentkey).attr('name', 'files[]')
+        $('#fileupload-' + contentkey).attr({
+                'name': 'files[]',
+                'multiple': 'multiple'
+            })
             .fileupload({
                 dataType: 'json',
                 dropZone: $holder,
@@ -1350,7 +1361,10 @@ var ImagelistHolder = Backbone.View.extend({
             distance: 5
         });
 
-        $('#fileupload-' + contentkey).attr('name', 'files[]')
+        $('#fileupload-' + contentkey).attr({
+                'name': 'files[]',
+                'multiple': 'multiple'
+            })
             .fileupload({
                 dataType: 'json',
                 dropZone: $holder,
