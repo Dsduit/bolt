@@ -26,7 +26,7 @@
     color: $sidebartextcolour;
     font-size: 120%;
     //overflow-y: auto;
-
+    
     ul.submenu {
         @include hide();
         font-size: 90%;
@@ -61,6 +61,7 @@
 
     #navpage-secondary {
         left: 0;
+    
     }
 }
 
@@ -77,6 +78,11 @@
         & > ul {
             width: $nav-secondary-large-width;
         }
+        
+        li em {
+            visibility: visible;
+        }
+        
     }
 }
 
@@ -97,6 +103,11 @@
                     color: $sidebartextcolourcollapsed;
                 }
             }
+        
+        li em {
+            visibility: hidden;
+        }
+        
         }
 
     }
