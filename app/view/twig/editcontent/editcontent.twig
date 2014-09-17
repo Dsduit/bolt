@@ -17,12 +17,17 @@
 
 {% block page_subtitle context.content.title|default('') %}
 
+{# clear default messages, because we use them in a different spot, in this template #}
+{% block messages "" %}
+
 {% block page_main %}
 
     {% set status_names = { "published": __("Published"), "held": __("Not published"), "timed": __("Timed publish"), "draft": __("Draft") } %}
 
     <div class="row">
         <div class="col-md-8">
+
+            {% include '_sub/_messages.twig' %}
 
             {# only if we have grouping tabs. #}
             {% if context.contenttype.groups|default is not empty %}
@@ -48,7 +53,7 @@
 
                 {% include 'editcontent/_meta.twig' %}
 
-                <div class="form-group">
+                <div class="form-group" style="margin-top: 40px;">
                     <div class="col-sm-12">
 
                         <div class="btn-group">
@@ -161,7 +166,7 @@
                     $('form').watchChanges();
 
                     // New record. Do a regular post, and expect to be redirected back to this page.
-                    var newaction = "?returnto=" + $(this).attr('id');
+                    var newaction = "?returnto=new";
                     $('#editcontent').attr('action', newaction).submit();
                 } else {
                     // Existing record. Do an 'ajaxy' post to update the record.
@@ -169,7 +174,9 @@
                     // Reset the changes to the form.
                     $('form').watchChanges();
 
-                    $.post("", $( "#editcontent" ).serialize() )
+                    // Let the controller know we're calling AJAX and expecting to be returned JSON
+                    var ajaxaction = "?returnto=ajax";
+                    $.post(ajaxaction, $( "#editcontent" ).serialize() )
                         .done(function(data) {
                             // var message = "{{ __('The changes to this %contenttype% have been saved.', {'%contenttype%': context.contenttype.singular_name}) }}";
                             $('p.lastsaved').html('{{ __('Saved on:') }} <strong></strong> <small>({{ macro.datetime(context.content.datechanged) }})</small></p>');
@@ -182,6 +189,26 @@
                                 '<i class="fa fa-circle status-' + $("#statusselect option:selected").val() + '"></i> ' +
                                 $("#statusselect option:selected").text()
                             );
+
+                            // Update anything changed by POST_SAVE handlers
+                            if ($.type(data) == 'object') {
+
+                                $.each(data, function(index, item) {
+
+                                    // Things like images are stored in JSON arrays
+                                    if ($.type(item) == 'object') {
+                                        $.each(item, function(subindex, subitem) {
+                                            $(":input[name='" + index + "[" + subindex + "]']").val(subitem);
+                                        });
+                                    } else {
+                                        $(":input[name='" + index + "']").val(item);
+                                    }
+
+                                });
+                            }
+
+                            // Reset the changes to the form from any updates we got from POST_SAVE changes
+                            $('form').watchChanges();
 
                         })
                         .fail(function(){

@@ -1,9 +1,6 @@
 <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-action="sidebar.toogle()">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+    <button type="button" class="navbar-toggle" data-action="sidebar.toggle()">
+        <i class="fa fa-fw fa-bars"></i> MENU
     </button>
     <a class="navbar-brand" href="{{ path('dashboard') }}">
         {# <img src="{{ paths.app }}view/img/bolt-icon.svg"> #}
@@ -19,7 +16,7 @@
         {# one omnisearch here, for "small and up", the other in the side-navbar #}
         <form class="navbar-form hidden-xs" role="search">
             <div class="form-group has-feedback">
-                <input type="text" class="form-control semitransparent omnisearch" placeholder="Omnisearch…">
+                <input type="text" class="form-control semitransparent omnisearch" placeholder="{{ __('Find') }}…">
                 <span class="form-control-feedback semitransparent"><i class="fa fa-search"></i></span>
             </div>
         </form>

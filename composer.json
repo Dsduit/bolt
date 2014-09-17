@@ -13,8 +13,10 @@
     "require": {
         "bolt/dumper": ">=0.7",
         "bolt/thumbs": "1.7.*@dev",
+        "brandonwamboldt/utilphp": "1.0.*",
+        "composer/composer": "1.0.*@dev",
         "doctrine/dbal": "~2.4",
-        "erusev/parsedown": "1.*",
+        "erusev/parsedown-extra": "~0.2",
         "eviweb/composer-wrapper" : "1.*",
         "filp/whoops": "1.*",
         "guzzle/guzzle": "3.3.*",
@@ -27,20 +29,19 @@
         "silex/silex": "1.*",
         "silex/web-profiler": "~1.0",
         "swiftmailer/swiftmailer": "5.*",
-        "symfony/config": "2.5.x-dev",
-        "symfony/console": "2.5.x-dev",
-        "symfony/filesystem": "2.5.x-dev",
-        "symfony/finder": "2.5.x-dev",
-        "symfony/form": "2.5.x-dev",
-        "symfony/locale": "2.5.x-dev",
-        "symfony/translation": "2.5.x-dev",
-        "symfony/twig-bridge": "2.5.x-dev",
-        "symfony/validator": "2.5.x-dev",
-        "symfony/web-profiler-bundle": "2.5.x-dev",
-        "symfony/yaml": "2.5.x-dev",
+        "symfony/config": "~2.5",
+        "symfony/console": "~2.5",
+        "symfony/filesystem": "~2.5",
+        "symfony/finder": "~2.5",
+        "symfony/form": "~2.5",
+        "symfony/locale": "~2.5",
+        "symfony/translation": "~2.5",
+        "symfony/twig-bridge": "~2.5",
+        "symfony/validator": "~2.5",
+        "symfony/web-profiler-bundle": "~2.5",
+        "symfony/yaml": "~2.5",
         "tdammers/htmlmaid": ">=0.5.2",
-        "twig/twig": ">=1.8,<2.0-dev",
-        "brandonwamboldt/utilphp": "1.0.*"
+        "twig/twig": ">=1.8,<2.0-dev"
     },
     "require-dev": {
         "phpunit/php-code-coverage": "1.2.*@dev",
@@ -61,5 +62,6 @@
             "Bolt": "app/src/",
             "Bolt\\Tests": "app/tests"
         }
-    }
+    },
+    "bin": ["app/nut"]
 }

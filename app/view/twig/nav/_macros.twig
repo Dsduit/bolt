@@ -1,10 +1,10 @@
 {##
  # Sidebar-menu heading
  #}
-{% macro heading(title) %}
+{% macro heading(title, icon) %}
     {% from _self import label %}
     <li class="divider">
-        <em>{{ label('-', title) }}</em>
+        <em>{{ label(icon, title) }}</em>
     </li>
 {% endmacro %}
 
@@ -51,7 +51,9 @@
                         {% if item == '-' %}
                             <hr>
                         {% elseif isallowed(item.isallowed|default('dashboard')) %}
-                            <a href='{{ item.link }}'><i class='fa fa-fw fa-{{ item.icon }}'> </i>{{ item.label }}</a>
+                            <a href='{{ item.link }}'>
+                                <i class='fa fa-fw fa-{{ item.icon }}'> </i>{{ item.label|default("<em>(" ~ __("no content…") ~ ")</em>")|raw }}
+                            </a>
                         {% endif %}
                     {% endfor %}
                 {% endspaceless %}">
@@ -64,7 +66,9 @@
                         {% set divider = true %}
                     {% elseif isallowed(item.isallowed|default('dashboard')) %}
                         <li{% if divider %} class="subdivider"{% endif %}>
-                            <a href="{{ item.link }}"><i class="fa fa-{{ item.icon }} fa-fw"> </i>{{ item.label }}</a>
+                            <a href="{{ item.link }}">
+                                <i class="fa fa-{{ item.icon }} fa-fw"> </i>{{ item.label|default("<em>(" ~ __("no content…") ~ ")</em>")|raw }}
+                            </a>
                         </li>
                         {% set divider = false %}
                     {% endif %}
@@ -101,6 +105,7 @@
 {% macro link(icon, label, pathname, active, divider) %}
     {% from _self import label %}
     {% set class = '' %}
+    {% if pathname == 'dashboard' %}{% set class = 'nav-secondary-dashboard' %}{% endif %}
     {% if active %}{% set class = class ~ ' active' %}{% endif %}
     {% if divider %}{% set class = class ~ ' divider' %}{% endif %}
 
@@ -115,9 +120,8 @@
  #}
 {% macro label(icon, label) %}
     {% if icon is empty %}
-        <i class="icon"><b>{{ label|slice(0,1) }}</b></i>
+        <i class="icon">{{ label|slice(0, 1) }}</i>
     {% elseif icon != '-' %}
-        {#<kbd><i class="fa fa-{{ icon }}"></i></kbd>#}
         <i class="icon fa fa-{{ icon }}"></i>
     {% endif %}
     {{ label }}

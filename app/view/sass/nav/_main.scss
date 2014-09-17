@@ -1,3 +1,12 @@
+$sidebarbackground: #333; 
+$sidebartextcolour: #DDD;
+$sidebartextcolourcollapsed: #AAA;
+
+$sidebarlink: #EEE;
+$sidebarlinkhover: #FFF;
+$sidebarbackgroundactive: lighten(desaturate($boltblue, 20), 7);
+$sidebarbackgroundhover: lighten(desaturate($boltblue, 20), 18);
+
 $nav-secondary-breakpoint: 768px;
 
 $nav-primary-min-height: 50px;
@@ -41,6 +50,14 @@ $nav-secondary-collapsed-width: ($nav-secondary-h-padding + $nav-secondary-inden
     height: 100%;
     background: $basebgcolour;
 }
+
+  // Override for wrong focus color in Foundation.
+ul.nav > li > a {
+    &:hover,
+    &:focus {
+      background-color: $sidebarbackgroundhover !important;
+    }
+  } 
 
 @import "primary";
 @import "secondary";

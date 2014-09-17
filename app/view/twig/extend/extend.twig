@@ -4,7 +4,10 @@
 
 {% block page_nav 'ExtendBolt' %}
 
-{% block page_title __('Extend Bolt') %}
+{% block page_title __('Extend '~app.config.get('general/branding/name')) %}
+
+{# clear default messages, because we use them in a different spot, in this template #}
+{% block messages "" %}
 
 {% block page_main %}
 
@@ -12,17 +15,22 @@
 
     {% if messages %}
         <div class="row">
-            <div class="alert alert-info">
-                <button class="close" data-dismiss="alert">×</button>
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
+            <div class="col-xs-12">
+                <div class="alert alert-info">
+                    <button class="close" data-dismiss="alert">×</button>
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     {% endif %}
 
     <div class="row extend-bolt-container">
-        <div class="col-md-8">
+        <div class="col-md-9">
+
+            {% include '_sub/_messages.twig' %}
+
             <div class="update-container hide-block">
                 <h3>{{ __('Updates') }}</h3>
                 <pre class="update-output console">{{ __('Checking for available updates (this may take up to 60 seconds)') }}..</pre>
@@ -60,6 +68,24 @@
                     </table>
                 </div>
             </section>
+
+
+            <!-- Modal for readme's-->
+            <div class="modal fade" id="readmeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                  </div>
+                  <div class="modal-body">
+                    ...
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
             <hr />
             <section>
                 <h3>{{ __('Install a new Extension') }}</h3>
@@ -87,7 +113,7 @@
             </section>
         </div>
 
-        <aside class="col-md-4">
+        <aside class="col-md-3">
             <div class="panel panel-default">
                 <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Extensions Options</div>
                 <div class="panel-body">
@@ -136,6 +162,8 @@
             boltExt.setMessage('installAll', '{{__('Running install of all packages...')}}');
             boltExt.setMessage('noStable', '{{__('No Stable Versions Available')}}');
             boltExt.setMessage('noTest', '{{__('No Test Versions Available')}}');
+            boltExt.setPath('extensionsconfigpath', '{{ paths.extensionsconfigpath }}');
+            boltExt.setPath('extensionspath', '{{ paths.extensionspath }}');
         });
     </script>
 

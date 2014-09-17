@@ -38,6 +38,17 @@
                     >
                         <i class="fa fa-undo"></i> {{ __('Revert changes') }}
                     </a>
+
+                  <div class="relatedfiles">
+                    {% if context.filegroup|length > 1 %}
+                      {{ __("Note, this file has related files:") }} 
+                      {% for related in context.filegroup %}
+                        {% if related != context.basename %}
+                          <a class="btn btn-tertiary btn-small" href="{{ path('fileedit', { 'file': '../app/config/' ~ related } )  }}">{{ related }}</a>
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  </div>
                 </div>
             </form>
         </div>

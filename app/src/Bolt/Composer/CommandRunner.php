@@ -20,7 +20,8 @@ class CommandRunner
         $this->basedir = $app['resources']->getPath('extensions');
         $this->packageRepo = $packageRepo;
         $this->packageFile = $app['resources']->getPath('root').'/extensions/composer.json';
-        putenv("COMPOSER_HOME=".sys_get_temp_dir());
+        umask(0000);
+        putenv("COMPOSER_HOME=".$app['resources']->getPath('cache').'/composer');
 
         $this->wrapper = \evidev\composer\Wrapper::create();
 
@@ -38,8 +39,14 @@ class CommandRunner
         $json = json_decode(file_get_contents($this->packageFile));
         $json->repositories->packagist = false;
         $basePackage = "bolt/bolt";
-        $json->provide = new \stdClass;
+        $json->provide = new \stdClass();
         $json->provide->$basePackage = $app['bolt_version'];
+        $json->scripts = array(
+            'post-package-install'=>"Bolt\\Composer\\ScriptHandler::extensions",
+            'post-package-update'=>"Bolt\\Composer\\ScriptHandler::extensions"
+        );
+        $pathToWeb = $app['resources']->findRelativePath($this->app['resources']->getPath('extensions'), $this->app['resources']->getPath('web'));
+        $json->extra = array('bolt-web-path'=>$pathToWeb);
         file_put_contents($this->packageFile, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         try {
@@ -89,7 +96,8 @@ class CommandRunner
     public function info($package, $version)
     {
         $check = $this->execute("show -N -i $package $version");
-        return $this->showCleanup( (array)$check, $package, $version);
+
+        return $this->showCleanup( (array) $check, $package, $version);
     }
 
     public function update($package)
@@ -233,6 +241,31 @@ class CommandRunner
             $pack['version'] = 'unknown';
             $pack['type'] = 'unknown';
             $pack['descrip'] = 'Not yet installed';
+        }
+
+        // For Bolt, we also need to know if the extension has a 'README' and a 'config.yml' file.
+        // Note we only do this for successfully loaded extensions.
+        if (isset($this->app['extensions']->composer[$name])) {
+            $paths = $this->app['resources']->getPaths();
+            if (is_readable($paths['extensionspath'] . '/vendor/' . $pack['name'] . '/README.md' )) {
+                $pack['readme'] = $pack['name'] . '/README.md';
+            } elseif (is_readable($paths['extensionspath'] . '/vendor/' . $pack['name'] . '/readme.md' )) {
+                $pack['readme'] = $pack['name'] . '/readme.md';
+            }
+
+            if (!empty($pack['readme'])) {
+                $pack['readmelink'] = $paths['async'] . 'readme/' . $pack['readme'];
+            }
+
+        }
+
+        // Check if we hve a config file, and if it's readable. (yet)
+        if (isset($this->app['extensions']->composer[$name]['name'])) {
+            $configfilepath = $paths['extensionsconfig'] . '/' . $this->app['extensions']->composer[$name]['name'] . '.yml';
+            if (is_readable($configfilepath)) {
+                $configfilename = 'extensions/' . $this->app['extensions']->composer[$name]['name'] . '.yml';
+                $pack['config'] = path('fileedit', array('namespace' => 'config', 'file' => $configfilename));
+            }
         }
 
         return $pack;

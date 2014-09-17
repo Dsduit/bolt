@@ -17,7 +17,7 @@
 
 {% block page_plain %}
 
-    <div id="navpage-wrapper"{% if app.request.cookies.get('sidebar') %} class="nav-secondary-collapsed"{% endif %}>
+    <div id="navpage-wrapper"{% if app.request.cookies.get('sidebar') %} class="nav-secondary-collapsed nav-secondary-collapsed-hoverable"{% endif %}>
         <nav id="navpage-primary" class="navbar navbar-static-top navbar-inverse navbar-bolt" role="navigation">
             {% include 'nav/_primary.twig' %}
         </nav>
@@ -52,13 +52,9 @@
                 </div>
             </div>
 
-            {% if app.session.flashBag.keys()|length() %}
-                <div class="row">
-                    <div class="col-md-8">
-                        {% include '_sub/_messages.twig' %}
-                    </div>
-                </div>
-            {% endif %}
+            {% block messages %}
+                {% include '_sub/_messages.twig' with { 'wrapper': true } %}
+            {% endblock messages %}
 
             {% block page_main %}[PAGE_MAIN]{% endblock page_main %}
         </div>

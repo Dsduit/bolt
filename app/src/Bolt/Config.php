@@ -23,10 +23,10 @@ class Config
         'text', 'integer', 'float', 'geolocation', 'imagelist', 'image', 'file', 'filelist', 'video', 'html',
         'textarea', 'datetime', 'date', 'select', 'templateselect', 'markdown', 'checkbox', 'slug'
     );
-    
+
     public $fields;
 
-    static private $yamlParser;
+    private static $yamlParser;
 
     /**
      * @param Application $app
@@ -51,9 +51,10 @@ class Config
     /**
      * @param  string $basename
      * @param  array  $default
-     * @param  mixed $defaultConfigPath TRUE: use default config path; FALSE:
-     *    just use the raw basename; string: use the given string as config
-     *    file path
+     * @param  mixed  $defaultConfigPath TRUE: use default config path
+     *                                   FALSE: just use the raw basename
+     *                                   string: use the given string as config
+     *                                   file path
      * @return array
      */
     private function parseConfigYaml($basename, $default = array(), $defaultConfigPath = true)
@@ -87,7 +88,7 @@ class Config
      * $app['config']->set('general/branding/name', 'Bolt');
      *
      * @param  string $path
-     * @param  mixed $value
+     * @param  mixed  $value
      * @return bool
      */
     public function set($path, $value)
@@ -356,9 +357,9 @@ class Config
                     }
                 }
 
-                // If the field has a 'group', make sure it's added to the 'groups' array, so we can turn 
+                // If the field has a 'group', make sure it's added to the 'groups' array, so we can turn
                 // them into tabs while rendering. This also makes sure that once you started with a group,
-                // all others have a group too. 
+                // all others have a group too.
                 if (!empty($temp['fields'][$key]['group'])) {
                     $currentgroup = $temp['fields'][$key]['group'];
                     $temp['groups'][] = $currentgroup;
@@ -411,6 +412,8 @@ class Config
     public function checkConfig()
     {
         $slugs = array();
+
+        $wrongctype = false;
 
         foreach ($this->data['contenttypes'] as $key => $ct) {
             // Make sure any field that has a 'uses' parameter actually points to a field that exists.
@@ -481,6 +484,7 @@ class Config
                          $field['type'])
                     );
                     $this->app['session']->getFlashBag()->set('error', $error);
+                    $wrongctype = true && $this->app['users']->getCurrentUsername();
                 }
             }
 
@@ -498,7 +502,7 @@ class Config
         }
 
         // Check DB-tables integrity
-        if ($this->app['integritychecker']->needsCheck() &&
+        if (!$wrongctype && $this->app['integritychecker']->needsCheck() &&
            (count($this->app['integritychecker']->checkTablesIntegrity()) > 0) &&
             $this->app['users']->getCurrentUsername()) {
             $msg = __(
@@ -539,7 +543,7 @@ class Config
             }
         }
     }
-    
+
     /**
      * A getter to access the fields manager
      *
@@ -711,7 +715,6 @@ class Config
 
             // Trigger the config loaded event on the resource manager
             $this->app['resources']->initializeConfig($this->data);
-
 
             // Yup, all seems to be right.
             return true;
